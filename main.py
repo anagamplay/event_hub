@@ -2,7 +2,6 @@ from events.events_service import EventService
 from participants.participants_service import ParticipantsService
 from menu.menu_service import Menu
 
-
 def main():
     print("Bem-vindo ao sistema de gerenciamento de events!")
 
@@ -28,10 +27,14 @@ def main():
                 print(f"{i+1} | Nome: {event['name']} | Data: {event['date']} | Local: {event['location']}")
 
         elif choice == '3':
-            active_participants = ParticipantsService.most_active_participants()
+            active_participants_ids = ParticipantsService.most_active_participants()
             print("Participantes mais ativos:")
-            for participant in active_participants:
-                print(participant)
+            for participant_id in active_participants_ids:
+                participant = ParticipantsService.search_participant(participant_id)
+                if participant:
+                    print("Nome:", participant[0]['name'])
+                else:
+                    print(f"Participante com ID {participant_id} não encontrado.")
 
         elif choice == '4':
             unique_participants = ParticipantsService.remove_duplicate_participants()
@@ -43,10 +46,38 @@ def main():
             few_participants_events = ParticipantsService.events_with_few_participants()
             print("Eventos com poucos participantes:")
             for event in few_participants_events:
-                print(event)
+                print(f"ID: {event['id']} | Nome: {event['name']} | Data: {event['date']} | Local: {event['location']}")
 
         elif choice == '6':
+            print("\neventos disponíveis:")
             EventService.list_events()
+            
+        elif choice == '7':
+            print("Lista de Participantes:")
+            ParticipantsService.list_participants()
+            
+        elif choice == '8':
+            name = input("Digite o nome do participante: ")
+            email = input("Digite o email do participante: ")
+            new_participant = {
+                'name': name,
+                'email': email
+            }
+            ParticipantsService.add_participant(new_participant)
+            print(f"Participante {name} cadastrado com sucesso!")
+            
+        elif choice == '9':
+            name = input("Digite o nome do evento: ")
+            date = input("Digite a data do evento (DD/MM/AAAA): ")
+            location = input("Digite o local do evento: ")
+            new_event = {
+                'name': name,
+                'date': date,
+                'location': location,
+                'participants': []
+            }
+            EventService.add_event(new_event)
+            print(f"Evento {name} cadastrado com sucesso!")
 
         elif choice == '0':
             print("Saindo do sistema. Até logo!")

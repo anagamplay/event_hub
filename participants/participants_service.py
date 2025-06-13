@@ -1,10 +1,12 @@
-from collections import Counter
 from events.event_list import event_list
 from participants.participant_list import participant_list
-from utils import most_common_elements
-
+from utils.most_common_elements import most_common_elements
 
 class ParticipantsService:
+    def list_participants():
+        for participant in participant_list:
+            print(f"ID: {participant['id']} | Nome: {participant['name']} | Email: {participant['email']}")
+    
     def search_participant(user_id):
         return [participant for participant in participant_list if participant['id'] == user_id]
 
@@ -41,3 +43,8 @@ class ParticipantsService:
             if len(event['participants']) < 3:
                 few_participants_events.append(event)
         return few_participants_events
+    
+    def add_participant(new_participant):
+        last_id = max([p['id'] for p in participant_list], default=0)
+        new_participant["id"] = last_id + 1
+        participant_list.append(new_participant)
