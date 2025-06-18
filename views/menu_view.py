@@ -1,5 +1,5 @@
-class Menu:
-  def show():
+class MenuView:
+  def show(self):
     print("======== MENU ========")
     print("1. Consultar Participante")
     print("2. Mostrar Eventos do Participante")
@@ -12,6 +12,6 @@ class Menu:
     print("9. Cadastrar Evento")
     print("0. Sair")
 
-  def get_user_choice():
+  def get_user_choice(self):
       choice = input("Escolha uma opção: ")
       return choice
