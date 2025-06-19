@@ -1,4 +1,4 @@
-from core.data import event_list
+from core.data.event_list import event_list
 
 class EventController:
     def list_events(self):

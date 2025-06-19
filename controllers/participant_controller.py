@@ -1,5 +1,6 @@
-from core.data import event_list, participant_list
-from core.utils import most_common_elements
+from core.data.event_list import event_list
+from core.data.participant_list import participant_list
+from core.utils.most_common_elements import most_common_elements
 
 class ParticipantController:
     @staticmethod
