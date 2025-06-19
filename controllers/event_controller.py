@@ -1,3 +1,5 @@
+from core.data import event_list
+
 class EventController:
     def list_events(self):
         for event in event_list:

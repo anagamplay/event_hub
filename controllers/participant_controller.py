@@ -1,3 +1,6 @@
+from core.data import event_list, participant_list
+from core.utils import most_common_elements
+
 class ParticipantController:
     @staticmethod
     def list_participants():
