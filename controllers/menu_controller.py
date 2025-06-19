@@ -45,11 +45,15 @@ class MenuController:
             '3': lambda: print('Função ainda não implementada'),
             '4': lambda: print('Função ainda não implementada'),
             '5': lambda: print('Função ainda não implementada'),
-            '0': self.show_main_menu
+            '0': None
         }
 
         action = actions.get(choice, self.invalid_option)
-        action()
+        
+        if choice == '0':
+            return
+        else:
+            action()
 
     def show_event_menu(self):
         options = {

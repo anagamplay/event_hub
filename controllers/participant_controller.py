@@ -1,14 +1,20 @@
 from core.data.event_list import event_list
 from core.data.participant_list import participant_list
 from core.utils.most_common_elements import most_common_elements
-from models.participant_model import Participant
+from services.participant_service import ParticipantService
+from views.participant_view import ParticipantView
 
 class ParticipantController:
+    def __init__(self):
+        self.participant_service = ParticipantService()
+        self.participant_view = ParticipantView()
+        
     @staticmethod
     def list_participants():
         for participant in participant_list:
-            print(f"ID: {participant['id']} | Nome: {participant['name']} | Email: {participant['email']}")
-    
+            print(
+                f"ID: {participant['id']} | Nome: {participant['name']} | Email: {participant['email']}")
+
     @staticmethod
     def search_participant(user_id):
         return [participant for participant in participant_list if participant['id'] == user_id]
@@ -51,14 +57,15 @@ class ParticipantController:
                 few_participants_events.append(event)
         return few_participants_events
 
-    @staticmethod
-    def add_participant():
-        name = input("O nome do participante: ")
-        email = input("O email do participante: ")
-        new_participant = Participant(name = name, email = email)
-        
-        last_id = max([p['id'] for p in participant_list], default=0)
-        new_participant.set_id(last_id + 1)
-        participant_list.append(new_participant)
-        print(participant_list)
-        print(f"Participante {name} cadastrado com sucesso!")
+    def add_participant(self):
+        self.participant_view.show_title('Cadastro de Participante')
+        try:
+            name = self.participant_view.get_input("Nome: ")
+            email = self.participant_view.get_input("E-mail: ")
+            new_participant = self.participant_service.create_participant(name, email)
+            if (new_participant):
+                self.participant_view.show_success_message("Participante cadastrado(a) com sucesso!")
+            else:
+                self.participant_view.show_error_message("Erro ao realizar cadastro.")
+        except Exception as e:
+            self.participant_view.show_error_message(f"Erro inesperado: {str(e)}")
