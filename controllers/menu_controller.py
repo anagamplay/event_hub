@@ -49,11 +49,7 @@ class MenuController:
         }
 
         action = actions.get(choice, self.invalid_option)
-        
-        if choice == '0':
-            return
-        else:
-            action()
+        action()
 
     def show_event_menu(self):
         options = {

@@ -1,7 +1,7 @@
 from core.data.event_list import event_list
 from core.data.participant_list import participant_list
 from core.utils.most_common_elements import most_common_elements
-from services.participant_service import ParticipantService
+from services.participant.participant_service import ParticipantService
 from views.participant_view import ParticipantView
 
 class ParticipantController:
@@ -64,7 +64,7 @@ class ParticipantController:
             email = self.participant_view.get_input("E-mail: ")
             new_participant = self.participant_service.create_participant(name, email)
             if (new_participant):
-                self.participant_view.show_success_message("Participante cadastrado(a) com sucesso!")
+                self.participant_view.show_success_message("Cadastro realizado com sucesso!")
             else:
                 self.participant_view.show_error_message("Erro ao realizar cadastro.")
         except Exception as e:
