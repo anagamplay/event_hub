@@ -27,13 +27,6 @@ class MenuController:
             action = actions.get(choice, self.invalid_option)
             action()
 
-    def exit_program(self):
-        self.menu_view.show_message("Saindo...")
-        exit()
-
-    def invalid_option(self):
-        self.menu_view.show_message("Opção inválida.")
-
     def show_participant_menu(self):
         options = {
             '1': 'Cadastrar Participante',
@@ -47,7 +40,7 @@ class MenuController:
         choice = self.menu_view.show_menu("PARTICIPANTES", options)
 
         actions = {
-            '1': lambda: print('Função ainda não implementada'),
+            '1': self.participant_controller.add_participant,
             '2': lambda: print('Função ainda não implementada'),
             '3': lambda: print('Função ainda não implementada'),
             '4': lambda: print('Função ainda não implementada'),
@@ -101,6 +94,13 @@ class MenuController:
 
         action = actions.get(choice, self.invalid_option)
         action()
+        
+    def exit_program(self):
+        self.menu_view.show_message("Saindo...")
+        exit()
+
+    def invalid_option(self):
+        self.menu_view.show_message("Opção inválida.")
 
         #     participant = self.participant_controller.search_participant(
         #         participant_id)

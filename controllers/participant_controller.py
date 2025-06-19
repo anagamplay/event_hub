@@ -1,6 +1,7 @@
 from core.data.event_list import event_list
 from core.data.participant_list import participant_list
 from core.utils.most_common_elements import most_common_elements
+from models.participant_model import Participant
 
 class ParticipantController:
     @staticmethod
@@ -51,7 +52,13 @@ class ParticipantController:
         return few_participants_events
 
     @staticmethod
-    def add_participant(new_participant):
+    def add_participant():
+        name = input("O nome do participante: ")
+        email = input("O email do participante: ")
+        new_participant = Participant(name = name, email = email)
+        
         last_id = max([p['id'] for p in participant_list], default=0)
-        new_participant["id"] = last_id + 1
+        new_participant.set_id(last_id + 1)
         participant_list.append(new_participant)
+        print(participant_list)
+        print(f"Participante {name} cadastrado com sucesso!")
