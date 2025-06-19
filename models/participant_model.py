@@ -3,6 +3,6 @@ class Participant:
         self.id = id
         self.name = name
         self.email = email
-    
-    def to_string(self):
+
+    def __str__(self):
         return f"ID: {self.id} | Nome: {self.name} | Email: {self.email}"

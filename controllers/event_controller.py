@@ -1,4 +1,4 @@
-class EventsService:
+class EventController:
     def list_events(self):
         for event in event_list:
             print(f"ID: {event['id']} | nome: {event['name']} | data: {event['date']} | local: {event['location']}")

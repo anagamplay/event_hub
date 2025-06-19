@@ -1,5 +1,6 @@
 class MenuView:
-  def show(self):
+  @staticmethod
+  def show():
     print("======== MENU ========")
     print("1. Consultar Participante")
     print("2. Mostrar Eventos do Participante")
@@ -11,7 +12,8 @@ class MenuView:
     print("8. Cadastrar Participante")
     print("9. Cadastrar Evento")
     print("0. Sair")
-
-  def get_user_choice(self):
+    
+  @staticmethod
+  def get_user_choice():
       choice = input("Escolha uma opção: ")
       return choice

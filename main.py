@@ -1,12 +1,10 @@
-from events.events_service import EventService
-from participants.participants_service import ParticipantsService
-from menu.menu_service import Menu
+from controllers.menu_controller import MenuController
+
 
 def main():
-    print("Bem-vindo ao sistema de gerenciamento de events!")
-
-    
-
+    print("Bem-vindo ao sistema de gerenciamento de eventos!")
+    menu_controller = MenuController()
+    menu_controller.start()
 
 if __name__ == "__main__":
     main()

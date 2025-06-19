@@ -1,11 +1,14 @@
-class ParticipantService:
+class ParticipantController:
+    @staticmethod
     def list_participants():
         for participant in participant_list:
             print(f"ID: {participant['id']} | Nome: {participant['name']} | Email: {participant['email']}")
     
+    @staticmethod
     def search_participant(user_id):
         return [participant for participant in participant_list if participant['id'] == user_id]
 
+    @staticmethod
     def participant_events(participant_id):
         participant_events = []
         for event in event_list:
@@ -14,6 +17,7 @@ class ParticipantService:
                 participant_events.append(event)
         return participant_events
 
+    @staticmethod
     def most_active_participants():
         events_participants = []
 
@@ -22,6 +26,7 @@ class ParticipantService:
 
         return most_common_elements(events_participants)
 
+    @staticmethod
     def remove_duplicate_participants():
         unique_participants = []
         seen_ids = set()
@@ -32,6 +37,7 @@ class ParticipantService:
                 seen_ids.add(participant['id'])
         return unique_participants
 
+    @staticmethod
     def events_with_few_participants():
         few_participants_events = []
 
@@ -39,7 +45,8 @@ class ParticipantService:
             if len(event['participants']) < 3:
                 few_participants_events.append(event)
         return few_participants_events
-    
+
+    @staticmethod
     def add_participant(new_participant):
         last_id = max([p['id'] for p in participant_list], default=0)
         new_participant["id"] = last_id + 1
