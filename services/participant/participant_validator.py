@@ -1,4 +1,4 @@
-from core.exceptions.validation_error import ParticipantValidationError
+from core.exceptions.participant_validation_error import ParticipantValidationError
 from core.validators.form_validator import FormValidator
 
 class ParticipantValidator:

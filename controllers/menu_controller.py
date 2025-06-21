@@ -46,7 +46,7 @@ class MenuController:
             '3': self.participant_controller.update_participant,
             '4': self.participant_controller.remove_participant,
             '5': self.participant_controller.list_participants,
-            '0': None
+            '0': self.show_main_menu
         }
 
         action = actions.get(choice, self.invalid_option)
@@ -65,10 +65,10 @@ class MenuController:
         choice = self.menu_view.show_menu("EVENTOS", options)
 
         actions = {
-            '1': lambda: print('Função ainda não implementada'),
-            '2': lambda: print('Função ainda não implementada'),
-            '3': lambda: print('Função ainda não implementada'),
-            '4': lambda: print('Função ainda não implementada'),
+            '1': self.event_controller.add_event,
+            '2': self.event_controller.find_event,
+            '3': self.event_controller.update_event,
+            '4': self.event_controller.remove_event,
             '5': self.event_controller.list_events,
             '0': self.show_main_menu
         }
@@ -83,16 +83,13 @@ class MenuController:
             '3': 'Participantes únicos',
             '0': 'Voltar'
         }
-
         choice = self.menu_view.show_menu("RELATÓRIOS", options)
-
         actions = {
             '1': self.participant_controller.most_active_participants,
-            '2': lambda: print('Função ainda não implementada'),
+            '2': self.event_controller.list_events_with_few_participants,
             '3': self.participant_controller.remove_duplicate_participants,
             '0': self.show_main_menu
         }
-
         action = actions.get(choice, self.invalid_option)
         action()
 

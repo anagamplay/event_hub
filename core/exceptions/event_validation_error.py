@@ -1,0 +1,2 @@
+class EventValidationError(Exception):
+    pass

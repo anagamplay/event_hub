@@ -1,5 +1,5 @@
 import re
-from core.exceptions.validation_error import ParticipantValidationError
+from core.exceptions.participant_validation_error import ParticipantValidationError
 
 class FormValidator:
     @staticmethod

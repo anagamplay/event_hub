@@ -1,4 +1,4 @@
-from core.exceptions.validation_error import ParticipantValidationError
+from core.exceptions.participant_validation_error import ParticipantValidationError
 from core.utils.most_common_elements import most_common_elements
 from services.participant.participant_service import ParticipantService
 from views.participant_view import ParticipantView
