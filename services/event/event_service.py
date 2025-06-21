@@ -59,3 +59,13 @@ class EventService:
             if len(event.get('participants', [])) <= max_participants:
                 few_participants.append(Event(**event))
         return few_participants
+    
+    def add_participant_to_event(self, event_id, participant_id):
+        for event in self.event_list:
+            if event['id'] == event_id:
+                if 'participants' not in event:
+                    event['participants'] = []
+                if participant_id not in event['participants']:
+                    event['participants'].append(participant_id)
+                return True
+        return False

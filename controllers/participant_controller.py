@@ -1,5 +1,5 @@
 from core.exceptions.participant_validation_error import ParticipantValidationError
-from core.utils.most_common_elements import most_common_elements
+from services.event.event_service import EventService
 from services.participant.participant_service import ParticipantService
 from views.participant_view import ParticipantView
 
@@ -7,13 +7,24 @@ class ParticipantController:
     def __init__(self):
         self.participant_service = ParticipantService()
         self.participant_view = ParticipantView()
-        
+        self.event_service = EventService()
+
     def add_participant(self):
         self.participant_view.show_title('Cadastro de Participante')
         try:
             name = self.participant_view.get_input("Nome: ")
             email = self.participant_view.get_input("E-mail: ")
             participant = self.participant_service.create_participant(name, email)
+            
+            selected_event_ids = self._select_events_for_participant()
+
+            if not selected_event_ids:
+                self.participant_view.show_error_message("O participante deve estar inscrito em pelo menos um evento.")
+                return
+
+            for event_id in selected_event_ids:
+                self.event_service.add_participant_to_event(event_id, participant.id)
+            
             self.participant_view.show_success_message("Cadastro realizado com sucesso!")
             self.participant_view.show_participant(participant)
         except ParticipantValidationError as ve:
@@ -35,26 +46,6 @@ class ParticipantController:
             self._find_by_name()
         else:
             self.participant_view.show_error_message("Opção inválida.")
-
-    def _find_by_id(self):
-        try:
-            participant_id = int(self.participant_view.get_input("ID do participante: "))
-            participant = self.participant_service.get_participant_by_id(participant_id)
-            if participant:
-                self.participant_view.show_participant(participant)
-            else:
-                self.participant_view.show_error_message("Participante não encontrado.")
-        except ValueError:
-            self.participant_view.show_error_message("ID inválido.")
-
-    def _find_by_name(self):
-        name = self.participant_view.get_input("Nome do participante: ").strip()
-        results = self.participant_service.get_participants_by_name(name)
-        if results:
-            for participant in results:
-                self.participant_view.show_participant(participant)
-        else:
-            self.participant_view.show_error_message("Nenhum participante encontrado com esse nome.")
 
     def participant_events(self):
         self.participant_view.show_title("Eventos do Participante")
@@ -137,3 +128,39 @@ class ParticipantController:
             self.participant_view.show_error_message("ID inválido.")
         except Exception as e:
             self.participant_view.show_error_message(f"Erro inesperado: {str(e)}")
+
+    def _find_by_id(self):
+        try:
+            participant_id = int(self.participant_view.get_input("ID do participante: "))
+            participant = self.participant_service.get_participant_by_id(participant_id)
+            if participant:
+                self.participant_view.show_participant(participant)
+            else:
+                self.participant_view.show_error_message("Participante não encontrado.")
+        except ValueError:
+            self.participant_view.show_error_message("ID inválido.")
+
+    def _find_by_name(self):
+        name = self.participant_view.get_input("Nome do participante: ").strip()
+        results = self.participant_service.get_participants_by_name(name)
+        if results:
+            for participant in results:
+                self.participant_view.show_participant(participant)
+        else:
+            self.participant_view.show_error_message("Nenhum participante encontrado com esse nome.")
+            
+    def _select_events_for_participant(self):
+        events = self.event_service.get_all_events()
+        if not events:
+            self.participant_view.show_info_message("Nenhum evento disponível. Cadastre eventos primeiro.")
+            return []
+
+        self.participant_view.show_info_message("Selecione os eventos que o participante irá participar:")
+        for event in events:
+            self.participant_view.show_event(event)
+
+        selected_ids_str = self.participant_view.get_input("IDs dos eventos (separados por vírgula): ")
+        selected_ids = [int(eid.strip()) for eid in selected_ids_str.split(",") if eid.strip().isdigit()]
+
+        return selected_ids
+

@@ -1,12 +1,14 @@
 from core.exceptions.event_validation_error import EventValidationError
 from models.event_model import Event
 from services.event.event_service import EventService
+from services.participant.participant_service import ParticipantService
 from views.event_view import EventView
 
 class EventController:
     def __init__(self):
         self.event_service = EventService()
         self.event_view = EventView()
+        self.participant_service = ParticipantService()
 
     def add_event(self):
         self.event_view.show_title("Cadastro de Evento")
@@ -28,8 +30,18 @@ class EventController:
     def list_events(self):
         self.event_view.show_title("Lista de Eventos")
         events = self.event_service.get_all_events()
+
         for event in events:
             self.event_view.show_event(event)
+
+            if not event.participants:
+                self.event_view.show_info_message("  Nenhum participante inscrito.")
+            else:
+                self.event_view.show_info_message("  Participantes:")
+                for participant_id in event.participants:
+                    participant = self.participant_service.get_participant_by_id(participant_id)
+                    if participant:
+                        self.event_view.show_info_message(f"    - {participant.name} ({participant.email})")
 
     def find_event(self):
         self.event_view.show_title("Consultar Evento")

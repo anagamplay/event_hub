@@ -22,9 +22,7 @@ class MenuController:
                 '3': self.show_report_menu,
                 '0': self.exit_program
             }
-
-            choice = self.menu_view.show_menu(
-                "MENU PRINCIPAL", main_menu_options)
+            choice = self.menu_view.show_menu("MENU PRINCIPAL", main_menu_options)
             action = actions.get(choice, self.invalid_option)
             action()
 
@@ -35,20 +33,19 @@ class MenuController:
             '3': 'Atualizar Participante',
             '4': 'Remover Participante',
             '5': 'Listar Participantes',
+            '6': 'Adicionar Participante a um Evento',
             '0': 'Voltar'
         }
-
         choice = self.menu_view.show_menu("PARTICIPANTES", options)
-
         actions = {
             '1': self.participant_controller.add_participant,
             '2': self.participant_controller.find_participant,
             '3': self.participant_controller.update_participant,
             '4': self.participant_controller.remove_participant,
             '5': self.participant_controller.list_participants,
+            '6': lambda: print('Função ainda não implementada'),
             '0': self.show_main_menu
         }
-
         action = actions.get(choice, self.invalid_option)
         action()
 
@@ -61,9 +58,7 @@ class MenuController:
             '5': 'Listar Eventos',
             '0': 'Voltar'
         }
-
         choice = self.menu_view.show_menu("EVENTOS", options)
-
         actions = {
             '1': self.event_controller.add_event,
             '2': self.event_controller.find_event,
@@ -72,7 +67,6 @@ class MenuController:
             '5': self.event_controller.list_events,
             '0': self.show_main_menu
         }
-
         action = actions.get(choice, self.invalid_option)
         action()
 

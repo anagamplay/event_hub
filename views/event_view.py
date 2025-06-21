@@ -19,4 +19,4 @@ class EventView:
         print(f"[INFO] {message}")
         
     def show_event(self, event):
-        print(str(event))
+        print(f"ID: {event.id} | Nome: {event.name} | Data: {event.date} | Local: {event.location}")

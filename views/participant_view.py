@@ -21,3 +21,6 @@ class ParticipantView:
     def show_participant(self, participant):
         print(str(participant))
         
+    def show_event(self, event):
+        print(f"ID: {event.id} | Nome: {event.name} | Data: {event.date} | Local: {event.location}")    
+        
