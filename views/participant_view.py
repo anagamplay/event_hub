@@ -1,5 +1,3 @@
-from models.participant_model import Participant
-
 class ParticipantView:
     @staticmethod
     def show_title(title: str):
@@ -16,3 +14,10 @@ class ParticipantView:
     @staticmethod
     def show_error_message(message: str):
         print(f"\n[ERROR] {message}")
+        
+    def show_info_message(self, message):
+        print(f"[INFO] {message}")
+        
+    def show_participant(self, participant):
+        print(str(participant))
+        

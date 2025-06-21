@@ -1,2 +1,2 @@
-class ValidationError(Exception):
+class ParticipantValidationError(Exception):
     pass
