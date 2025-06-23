@@ -22,15 +22,13 @@ class ParticipantController:
                 self.participant_view.show_error_message("O participante deve estar inscrito em pelo menos um evento.")
                 return
 
-            for event_id in selected_event_ids:
-                self.event_service.add_participant_to_event(event_id, participant.id)
+            self._add_to_events(participant.id, selected_event_ids)
             
             self.participant_view.show_success_message("Cadastro realizado com sucesso!")
             self.participant_view.show_participant(participant)
-        except ParticipantValidationError as ve:
-            self.participant_view.show_error_message(str(ve))
-        except Exception as e:
-            self.participant_view.show_error_message(f"Erro inesperado: {str(e)}")
+            
+        except (ParticipantValidationError, Exception) as e:
+            self._handle_error(e)
             
     def list_participants(self):
         self.participant_view.show_title("Lista de Participantes")
@@ -40,8 +38,10 @@ class ParticipantController:
     def find_participant(self):
         self.participant_view.show_title("Buscar Participante")
         option = self.participant_view.get_input("Buscar por (1) ID ou (2) Nome? ")
+        
         if option == '1':
-            self._find_by_id()
+            participant = self._find_by_id()
+            self.participant_view.show_participant(participant)
         elif option == '2':
             self._find_by_name()
         else:
@@ -50,23 +50,23 @@ class ParticipantController:
     def participant_events(self):
         self.participant_view.show_title("Eventos do Participante")
         try:
-            participant_id = int(self.participant_view.get_input("ID do participante: "))
+            participant_id = self._get_participant_id()
             events = self.participant_service.get_events_by_participant(participant_id)
+            
             if events:
-                for i, event in enumerate(events, start=1):
-                    self.participant_view.show_event(event, prefix=f"{i}")
+                for event in events:
+                    self.participant_view.show_event(event)
             else:
                 self.participant_view.show_error_message("Nenhum evento encontrado para este participante.")
-        except ValueError:
-            self.participant_view.show_error_message("ID inválido.")
+                
+        except Exception as e:
+            self._handle_error(e)
 
     def most_active_participants(self):
         self.participant_view.show_title("Participantes Mais Ativos")
-        participant_ids = self.participant_service.get_most_active_participants()
-        for pid in participant_ids:
-            participant = self.participant_service.get_participant_by_id(pid)
-            if participant:
-                self.participant_view.show_participant(participant)
+        participants = self.participant_service.get_most_active_participants()
+        for participant in participants:
+            self.participant_view.show_participant(participant)
 
     def remove_duplicate_participants(self):
         self.participant_view.show_title("Remover Participantes Duplicados")
@@ -77,7 +77,7 @@ class ParticipantController:
     def update_participant(self):
         self.participant_view.show_title("Atualizar Participante")
         try:
-            participant_id = int(self.participant_view.get_input("ID do participante: "))
+            participant_id = self._get_participant_id()
             participant = self.participant_service.get_participant_by_id(participant_id)
             if not participant:
                 self.participant_view.show_error_message("Participante não encontrado.")
@@ -98,17 +98,13 @@ class ParticipantController:
             self.participant_view.show_success_message("Participante atualizado com sucesso!")
             self.participant_view.show_participant(updated_participant)
 
-        except ParticipantValidationError as ve:
-            self.participant_view.show_error_message(str(ve))
-        except ValueError:
-            self.participant_view.show_error_message("ID inválido.")
-        except Exception as e:
-            self.participant_view.show_error_message(f"Erro inesperado: {str(e)}")
+        except (ParticipantValidationError, Exception) as e:
+            self._handle_error(e)
             
     def remove_participant(self):
         self.participant_view.show_title("Remover Participante")
         try:
-            participant_id = int(self.participant_view.get_input("ID do participante: "))
+            participant_id = self._get_participant_id()
             participant = self.participant_service.get_participant_by_id(participant_id)
             if not participant:
                 self.participant_view.show_error_message("Participante não encontrado.")
@@ -124,15 +120,13 @@ class ParticipantController:
             else:
                 self.participant_view.show_info_message("Remoção cancelada.")
 
-        except ValueError:
-            self.participant_view.show_error_message("ID inválido.")
         except Exception as e:
-            self.participant_view.show_error_message(f"Erro inesperado: {str(e)}")
+            self._handle_error(e)
             
     def add_participant_to_event(self):
         self.participant_view.show_title("Adicionar Participante a Evento")
         try:
-            participant_id = int(self.participant_view.get_input("ID do participante: "))
+            participant_id = self._get_participant_id()
             participant = self.participant_service.get_participant_by_id(participant_id)
             if not participant:
                 self.participant_view.show_error_message("Participante não encontrado.")
@@ -143,29 +137,30 @@ class ParticipantController:
                 self.participant_view.show_error_message("Nenhum evento selecionado.")
                 return
 
-            for event_id in selected_event_ids:
-                self.event_service.add_participant_to_event(event_id, participant.id)
+            self._add_to_events(participant.id, selected_event_ids)
 
             self.participant_view.show_success_message("Participante adicionado aos eventos com sucesso!")
-        except ValueError:
-            self.participant_view.show_error_message("ID inválido.")
+            
         except Exception as e:
-            self.participant_view.show_error_message(f"Erro inesperado: {str(e)}")
+            self._handle_error(e)
+
+    def _get_participant_id(self):
+        try:
+            return int(self.participant_view.get_input("ID do participante: "))
+        except ValueError:
+            raise ValueError("ID inválido.")
 
     def _find_by_id(self):
         try:
-            participant_id = int(self.participant_view.get_input("ID do participante: "))
-            participant = self.participant_service.get_participant_by_id(participant_id)
-            if participant:
-                self.participant_view.show_participant(participant)
-            else:
-                self.participant_view.show_error_message("Participante não encontrado.")
-        except ValueError:
-            self.participant_view.show_error_message("ID inválido.")
+            pid = self._get_participant_id()
+            return self.participant_service.get_participant_by_id(pid)
+        except Exception as e:
+            self._handle_error(e)
 
     def _find_by_name(self):
         name = self.participant_view.get_input("Nome do participante: ").strip()
         results = self.participant_service.get_participants_by_name(name)
+        
         if results:
             for participant in results:
                 self.participant_view.show_participant(participant)
@@ -177,13 +172,22 @@ class ParticipantController:
         if not events:
             self.participant_view.show_info_message("Nenhum evento disponível. Cadastre eventos primeiro.")
             return []
-
+        
         self.participant_view.show_info_message("Selecione os eventos que o participante irá participar:")
         for event in events:
             self.participant_view.show_event(event)
 
-        selected_ids_str = self.participant_view.get_input("IDs dos eventos (separados por vírgula): ")
-        selected_ids = [int(eid.strip()) for eid in selected_ids_str.split(",") if eid.strip().isdigit()]
-
-        return selected_ids
-
+        ids_input  = self.participant_view.get_input("IDs dos eventos (separados por vírgula): ")
+        return [int(eid.strip()) for eid in ids_input.split(",") if eid.strip().isdigit()]
+    
+    def _add_to_events(self, participant_id, event_ids):
+        for event_id in event_ids:
+            self.event_service.add_participant_to_event(event_id, participant_id)
+            
+    def _handle_error(self, error):
+        if isinstance(error, ParticipantValidationError):
+            self.participant_view.show_error_message(str(error))
+        elif isinstance(error, ValueError):
+            self.participant_view.show_error_message("ID inválido.")
+        else:
+            self.participant_view.show_error_message(f"Erro inesperado: {str(error)}")

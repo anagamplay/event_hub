@@ -42,18 +42,18 @@ class ParticipantService:
     def get_events_by_participant(self, participant_id):
         return [event for event in event_list if participant_id in event['participants']]
 
-    def get_most_active_participants(self):
+    def get_most_active_participants(self) -> list[Participant]:
         all_participants = []
-        for event in event_list:
-            all_participants.extend(event['participants'])
-        return most_common_elements(all_participants)
+        most_common_ids = most_common_elements(all_participants)
+        participants_by_id = {p['id']: Participant.from_dict(p) for p in self.participant_list}
+        return [participants_by_id[pid] for pid in most_common_ids if pid in participants_by_id]
 
     def get_unique_participants(self):
         unique = []
         seen_ids = set()
         for participant in self.participant_list:
             if participant['id'] not in seen_ids:
-                unique.append(participant)
+                unique.append(Participant.from_dict(participant))
                 seen_ids.add(participant['id'])
         return unique
 
