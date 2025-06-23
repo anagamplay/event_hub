@@ -34,15 +34,6 @@ class EventController:
         for event in events:
             self.event_view.show_event(event)
 
-            if not event.participants:
-                self.event_view.show_info_message("  Nenhum participante inscrito.")
-            else:
-                self.event_view.show_info_message("  Participantes:")
-                for participant_id in event.participants:
-                    participant = self.participant_service.get_participant_by_id(participant_id)
-                    if participant:
-                        self.event_view.show_info_message(f"    - {participant.name} ({participant.email})")
-
     def find_event(self):
         self.event_view.show_title("Consultar Evento")
         try:
@@ -50,6 +41,15 @@ class EventController:
             event = self.event_service.get_event_by_id(event_id)
             if event:
                 self.event_view.show_event(event)
+                
+                if not event.participants:
+                    self.event_view.show_info_message("  Nenhum participante inscrito.")
+                else:
+                    self.event_view.show_info_message("  Participantes:")
+                    for participant_id in event.participants:
+                        participant = self.participant_service.get_participant_by_id(participant_id)
+                        if participant:
+                            self.event_view.show_info_message(f"    - {participant.name} ({participant.email})")
             else:
                 self.event_view.show_error_message("Evento não encontrado.")
         except ValueError:
