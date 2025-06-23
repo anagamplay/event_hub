@@ -128,6 +128,29 @@ class ParticipantController:
             self.participant_view.show_error_message("ID inválido.")
         except Exception as e:
             self.participant_view.show_error_message(f"Erro inesperado: {str(e)}")
+            
+    def add_participant_to_event(self):
+        self.participant_view.show_title("Adicionar Participante a Evento")
+        try:
+            participant_id = int(self.participant_view.get_input("ID do participante: "))
+            participant = self.participant_service.get_participant_by_id(participant_id)
+            if not participant:
+                self.participant_view.show_error_message("Participante não encontrado.")
+                return
+
+            selected_event_ids = self._select_events_for_participant()
+            if not selected_event_ids:
+                self.participant_view.show_error_message("Nenhum evento selecionado.")
+                return
+
+            for event_id in selected_event_ids:
+                self.event_service.add_participant_to_event(event_id, participant.id)
+
+            self.participant_view.show_success_message("Participante adicionado aos eventos com sucesso!")
+        except ValueError:
+            self.participant_view.show_error_message("ID inválido.")
+        except Exception as e:
+            self.participant_view.show_error_message(f"Erro inesperado: {str(e)}")
 
     def _find_by_id(self):
         try:

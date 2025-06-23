@@ -43,7 +43,7 @@ class MenuController:
             '3': self.participant_controller.update_participant,
             '4': self.participant_controller.remove_participant,
             '5': self.participant_controller.list_participants,
-            '6': lambda: print('Função ainda não implementada'),
+            '6': self.participant_controller.add_participant_to_event,
             '0': self.show_main_menu
         }
         action = actions.get(choice, self.invalid_option)
