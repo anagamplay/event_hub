@@ -8,64 +8,68 @@ class EventService:
         self.event_validator = EventValidator()
 
     def create_event(self, name, description, date, location):
-        self.event_validator.validate(name=name, description=description, date=date, location=location)
+        self.event_validator.validate(
+            name=name, description=description, date=date, location=location
+        )
 
-        last_id = max([e['id'] for e in self.event_list], default=0)
+        last_id = max(map(lambda e: e['id'], self.event_list), default=0)
         new_id = last_id + 1
 
-        new_event = Event(id=new_id, description=description, name=name, date=date, location=location, participants=[])
+        new_event = Event(
+            id=new_id,
+            description=description,
+            name=name,
+            date=date,
+            location=location,
+            participants=[]
+        )
 
-        self.event_list.append({
-            'id': new_event.id,
-            'name': new_event.name,
-            'date': new_event.date,
-            'description': new_event.description,
-            'location': new_event.location,
-            'participants': []
-        })
-
+        self.event_list.append(vars(new_event))
         return new_event
 
     def get_all_events(self):
-        return [Event(**event) for event in self.event_list]
+        return list(map(lambda event: Event(**event), self.event_list))
 
     def get_event_by_id(self, event_id):
-        for event in self.event_list:
-            if event['id'] == event_id:
-                return Event(**event)
-        return None
+        event = next(filter(lambda e: e['id'] == event_id, self.event_list), None)
+        return Event(**event) if event else None
 
     def update_event(self, event_id, name, description, date, location):
-        self.event_validator.validate(name=name, description=description, date=date, location=location)
+        self.event_validator.validate(
+            name=name, description=description, date=date, location=location
+        )
 
-        for event in self.event_list:
-            if event['id'] == event_id:
-                event['name'] = name
-                event['date'] = date
-                event['location'] = location
-                return Event(**event)
+        event = next(filter(lambda e: e['id'] == event_id, self.event_list), None)
+        if event:
+            event.update({
+                'name': name,
+                'date': date,
+                'location': location,
+                'description': description
+            })
+            return Event(**event)
         return None
 
     def remove_event(self, event_id):
-        for index, event in enumerate(self.event_list):
-            if event['id'] == event_id:
-                del self.event_list[index]
-                return True
+        index = next((i for i, e in enumerate(self.event_list) if e['id'] == event_id), None)
+        if index is not None:
+            del self.event_list[index]
+            return True
         return False
 
     def get_events_with_few_participants(self, max_participants=2):
-        few_participants = []
-        for event in self.event_list:
-            if len(event.get('participants', [])) <= max_participants:
-                few_participants.append(Event(**event))
-        return few_participants
-    
+        return list(
+            map(
+                lambda event: Event(**event),
+                filter(lambda e: len(e.get('participants', [])) <= max_participants, self.event_list)
+            )
+        )
+
     def add_participant_to_event(self, event_id, participant_id):
-        for event in self.event_list:
-            if event['id'] == event_id:
-                if 'participants' not in event:
-                    event['participants'] = []
-                if participant_id not in event['participants']:
-                    event['participants'].append(participant_id)
-                return True
+        event = next(filter(lambda e: e['id'] == event_id, self.event_list), None)
+        if event:
+            event.setdefault('participants', [])
+            if participant_id not in event['participants']:
+                event['participants'].append(participant_id)
+            return True
         return False

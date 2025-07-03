@@ -98,6 +98,10 @@ class EventController:
             if not event:
                 self.event_view.show_error_message("Evento não encontrado.")
                 return
+            
+            if event.participants:  # <- Verifica se há participantes
+                self.event_view.show_error_message("Não é possível remover um evento com participantes cadastrados.")
+                return
 
             confirm = self.event_view.get_input(
                 f"Tem certeza que deseja remover o evento '{event.name}'? (s/n): "
